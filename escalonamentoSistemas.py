@@ -4,12 +4,6 @@ nomesVariaveis = {} #dicionario com o nome das variaveis
 
 matrizCoef = []#lista de coeficientes de todas variaveis
 
-def determDiagPrinc(matrizCoef):
-  for i in range(len(matrizCoef)):
-    for j in range(len(matrizCoef)):
-      print(matrizCoef[i][j])
-  return matrizCoef
-
 def recalculaLinha(linha,valorDiagonal):
   tamanho = len(linha)
   idx = 0
@@ -18,13 +12,29 @@ def recalculaLinha(linha,valorDiagonal):
     idx+=1
   return linha
 
+def escalonar(sistema):
+    
+    tam = len(sistema)                                                              # Determina o tamanho do sistema (ex: 3x3)
+    
+    for linha in range(tam):                                                        # Loop que passa por todos os indices da MATRIZ (L1, L2, L3...)
+        pivot = sistema[linha][linha]                                               # Determina o elemento da Diag. Principal
+        if pivot != 1:                                                              # Caso o pivot não for igual a um...
+            sistema[linha] = [round(x / pivot, 2) for x in sistema[linha]]              # Ele e todos os elementos na linha serão dividos e arredondados pelo pivot
+        # 'i' é a linha atual, enquando a 'linha' é o mesmo elemento na linha de cima.
+        for i in range(tam):                                                        # Loop que passa por todos os indices da MATRIZ (L1, L2, L3...)
+            if i == linha:                                                              # Caso o elemento estiver na diagonal princical ele pula o loop
+                continue
+
+            val = sistema[i][linha]                                                 # 'val' representa o valor da coluna atual para zerar, sem ser a diag. principal.
+            for j in range(len(sistema[linha])):                                    # Percorre cada elemento na lista com o limite de indices na linha 
+                sistema[i][j] = (-val * sistema[linha][j]) + sistema[i][j]          # Zera o elemento que não for o pivot aplicando a fórmula
+    return sistema                                                                  # Retorna o sistema escalonado com o resultado no ultimo elemento de cada linha. 
 
 def valorDiagonal(matriz):
   linhas = len(matriz)
   indLinhas = 0
   indCoef = 0
   nrCoef = len(matriz[0])
-  print()
   while indLinhas < linhas:
     while indCoef < nrCoef-1: #tira 1 pq é o LD (resultado)
       #testa se o valor é a diganal principal
@@ -129,14 +139,23 @@ def abre_arquivo(nomeArquivo):
     coeficientes.append(float(ld))                          ## Ao dar append, faz o cast para inteiro para não salvar como caracteres.
     matrizCoef.append(coeficientes)                       ## Faz o append de todos os coeficientes 
 
-abre_arquivo('/workspaces/otimizacao-computacional/equacoes.txt')
+abre_arquivo('./equacoes.txt')
 c,v = separaCoef_var('x1')
 print('Coeficiente:',c,'Variavel:',v)
 
 print()
-
-
+print('Matriz do sistema extraida:')
 for linha in matrizCoef:                                ## Mostra a matriz com todos os coeficientes da equação mais o seu resultado.
   print(linha)
-#determDiagPrinc(matrizCoef)
+
+print()
+print('Matriz do sistema com diagonal principal igual a 1: ')
 valorDiagonal(matrizCoef)
+
+print()
+print('Matriz do sistema escalonada:')
+escalonar(matrizCoef)
+for linha in matrizCoef:
+    print(linha) 
+
+   
